@@ -16,10 +16,10 @@ class TestUserCreate(TestCase):
     original_db_file = database.SQLALCHEMY_DATABASE_URL.split("///")[1]
 
     def setUp(self):
-        shutil.copy(self.original_db_file, "./db.backup")
+        shutil.copy(self.original_db_file, "./backup.db")
 
     def tearDown(self):
-        os.rename("./db.backup", self.original_db_file)
+        os.rename("./backup.db", self.original_db_file)
 
     def test_create_user(self):
         response = client.post("/user/", json={"username": "test", "password": "test"})
