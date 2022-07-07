@@ -17,8 +17,15 @@ push() {
     fi
 }
 
+test() {
+    format
+    venv/bin/python -m coverage run -m pytest
+    venv/bin/python -m coverage report -m
+}
+
 setup-dev() {
     /usr/bin/python3 -m venv -h > /dev/null 2>&1 || sudo apt install python3-venv
+    rm -rf venv
     /usr/bin/python3 -m venv venv
     venv/bin/python -m pip install -r requirements-dev.txt
     venv/bin/python -m pip install -r requirements.txt
