@@ -54,3 +54,18 @@ class TestUserCreate(TestCase):
         assert (
             json_response["detail"] == f"User with username {username} already exists"
         )
+
+    def test_create_user_with_invalid_characters(self):
+        assert False, "Not implemented"
+
+    def test_create_user_with_invalid_length(self):
+        assert False, "Not implemented"
+
+    def test_create_user_with_invalid_password(self):
+        assert False, "Not implemented"
+
+    def test_create_user_with_missing_username(self):
+        assert False, "Not implemented"
+
+    def test_create_user_with_missing_password(self):
+        assert False, "Not implemented"
