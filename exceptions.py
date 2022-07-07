@@ -8,4 +8,7 @@ class UserExists(Exception):
 
 
 def user_exists(request: Request, exc: UserExists):
-    return JSONResponse({"detail": exc.message}, status_code=status.HTTP_409_CONFLICT)
+    return JSONResponse(
+        {"detail": [{"msg": exc.message, "type": "user_exists"}]},
+        status_code=status.HTTP_409_CONFLICT,
+    )

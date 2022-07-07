@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 import exceptions
 from db.models import DbUser
-from routers.schemas import UserRequest
+from routers.user.schemas import UserRequest
 
 
 def create_user(db: Session, user: UserRequest):
