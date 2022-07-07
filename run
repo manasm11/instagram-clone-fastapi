@@ -6,6 +6,7 @@ format() {
 }
 
 push() {
+    format
     git status --short
     printf "Are you sure you want to push? (y/n) "
     read -r answer
@@ -24,6 +25,7 @@ setup-dev() {
 }
 
 start-dev() {
+    format
     venv/bin/python -m uvicorn main:app --reload --port 8080 --host localhost
 }
 
