@@ -17,7 +17,7 @@ from main import app
 from tests.common import TestCase
 
 
-class TestUserCreate(TestCase):
+class TestCreateUser(TestCase):
     def test_create_user(self):
         username = self.get_username()
         response = self.client.post(

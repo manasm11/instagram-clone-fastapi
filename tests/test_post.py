@@ -1,7 +1,7 @@
 from tests.common import TestCase
 
 
-class TestPost(TestCase):
+class TestCreatePost(TestCase):
     def test_create_post(self):
         assert False, "Not implemented"
 
