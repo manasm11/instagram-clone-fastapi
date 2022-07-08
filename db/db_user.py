@@ -7,10 +7,8 @@ from routers.user.schemas import UserRequest
 
 
 def create_user(db: Session, user: UserRequest):
-    user_with_username = (
-        db.query(DbUser).filter(DbUser.username == user.username).first()
-    )
-    if user_with_username:
+    _user = db.query(DbUser).filter(DbUser.username == user.username).first()
+    if _user:
         raise exceptions.UserExists(user.username)
     user = DbUser(username=user.username, password=Hash.bcrypt(user.password))
     db.add(user)
