@@ -7,7 +7,7 @@ from loguru import logger
 
 import exceptions
 from db.database import Base, _engine
-from routers import user
+from routers import post, user
 
 # Creates Database and Tables
 Base.metadata.create_all(_engine)
@@ -34,6 +34,7 @@ logger.add(
     compression="gz",
 )
 app.include_router(user.router)
+app.include_router(post.router)
 
 
 @app.get("/")
