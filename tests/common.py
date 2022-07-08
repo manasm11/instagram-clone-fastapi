@@ -1,18 +1,12 @@
 import os
 import shutil
-import string
 import time
 import unittest
-from typing import List
-from urllib import response
 
-from fastapi import status
 from fastapi.testclient import TestClient
 from requests import Response
-from sqlalchemy.orm import Session
 
-from db import database, db_user
-from db.models import DbUser
+from db import database
 from main import app
 
 RANDOM_STRING = (

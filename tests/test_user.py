@@ -1,19 +1,9 @@
-import os
-import shutil
 import string
-import time
-from typing import List
 from unittest import TestCase
-from urllib import response
 
 from fastapi import status
-from fastapi.testclient import TestClient
-from requests import Response
-from sqlalchemy.orm import Session
 
-from db import database, db_user
 from db.models import DbUser
-from main import app
 from tests.common import TestCase
 
 
