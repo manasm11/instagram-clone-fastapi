@@ -28,6 +28,7 @@ setup-dev() {
     /usr/bin/python3 -m venv -h > /dev/null 2>&1 || sudo apt install python3-venv
     rm -rf venv
     /usr/bin/python3 -m venv venv
+    venv/bin/python -m pip install --upgrade pip
     venv/bin/python -m pip install -r requirements-dev.txt
     venv/bin/python -m pip install -r requirements.txt
 }

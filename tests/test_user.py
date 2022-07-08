@@ -9,8 +9,10 @@ from urllib import response
 from fastapi import status
 from fastapi.testclient import TestClient
 from requests import Response
+from sqlalchemy.orm import Session
 
 from db import database, db_user
+from db.models import DbUser
 from main import app
 
 client = TestClient(app)
@@ -137,3 +139,12 @@ class TestUserCreate(TestCase):
             create_user(pwd="1aD" * 5),
             "Password must contain special character",
         )
+
+    def test_create_user__password_is_encrypted(self):
+        username = get_unique_username()
+        password = "Testing@321"
+        create_user(username, password)
+        db: Session = next(database.get_db())
+        user = db.query(DbUser).filter(DbUser.username == username).first()
+        assert "Testing" not in user.password
+        assert len(user.password) > len(password)
