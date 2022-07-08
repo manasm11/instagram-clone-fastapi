@@ -58,3 +58,6 @@ class TestCreatePost(TestCase):
     def test_create_post__creator_id__incorrect_datatype(self):
         response = self.create_post(creator_id="a")
         self.check_error(response, "Creator Id incorrect")
+
+    def test_create_post__requires_authentication(self):
+        assert False, "Not implemented"
