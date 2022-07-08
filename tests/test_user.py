@@ -16,12 +16,12 @@ from main import app
 client = TestClient(app)
 
 
-def create_user(username, password="Testing@321"):
-    return client.post("/user/", json={"username": username, "password": password})
-
-
 def get_unique_username():
-    return f"test_user_{int(time.time())}"
+    return f"test_user_{int(time.time())%1000}"
+
+
+def create_user(username=get_unique_username(), pwd="Testing@321"):
+    return client.post("/user/", json={"username": username, "password": pwd})
 
 
 def check_error(
@@ -62,7 +62,7 @@ class TestUserCreate(TestCase):
 
     def test_create_user__username_missing(self):
         response = create_user(None)
-        check_error(response, "Missing username")
+        check_error(response, "Username missing")
 
     def test_create_user__username_duplicate(self):
         username = get_unique_username()
@@ -104,23 +104,36 @@ class TestUserCreate(TestCase):
     def test_create_user__username_has_whitespace(self):
         check_error(create_user("test test"), "Username cannot have whitespace")
 
-    def test_create_user__username_with_multiple_errors(self):
-        check_error(create_user("1he mTl"), num_errors=2)
+    def test_create_user__password_missing(self):
+        check_error(create_user(pwd=None), "Password missing")
 
     def test_create_user__password_invalid_length(self):
-        assert False, "Not implemented"
-
-    def test_create_user__password_missing(self):
-        assert False, "Not implemented"
+        check_error(
+            create_user(pwd="a1!A"), "Password must be at least 8 characters long"
+        )
+        check_error(create_user(pwd=""), "Password must be at least 8 characters long")
+        check_error(
+            create_user(pwd="a1!A" * 6),
+            "Password must be at most 20 characters long",
+        )
 
     def test_create_user__password_no_digit(self):
-        assert False, "Not implemented"
+        check_error(create_user(pwd="b@D" * 5), "Password must contain digits")
 
     def test_create_user__password_no_upper_case(self):
-        assert False, "Not implemented"
+        check_error(
+            create_user(pwd="b@1" * 5),
+            "Password must contain uppercase letter",
+        )
 
     def test_create_user__password_no_lower_case(self):
-        assert False, "Not implemented"
+        check_error(
+            create_user(pwd="1@D" * 5),
+            "Password must contain lowercase letter",
+        )
 
     def test_create_user__password_no_special_char(self):
-        assert False, "Not implemented"
+        check_error(
+            create_user(pwd="1aD" * 5),
+            "Password must contain special character",
+        )

@@ -10,60 +10,30 @@ class UserRequest(BaseModel):
     username: Any = Field(
         ...,
         example=f"test_user_{int(time())%1000}",
-        # max_length=20,
-        # min_length=3,
-        # regex="^[a-z0-9_]+$",
         description="Username must be lowercase alphanumeric of length 3-20",
     )
-    password: str = Field(
+    password: Any = Field(
         ...,
-        example="Testing@321",
-        max_length=20,
-        min_length=8,
-        regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,20}$",
+        example=f"Testing@{int(time()%1000)}",
         description="Password must be of length 8-20, contain at least one small alphabetical character, one capital alphabetical character, one numeric character, one numeric character, and one special character (@$!%*#?&)",
     )
 
     @validator("username")
     def username_must_be_string(cls, v):
         if v is None:
-            raise ValueError("Missing username")
-        return v
-
-    @validator("username")
-    def username_must_not_contain_special_characters(cls, v):
+            raise ValueError("Username missing")
+        if len(v) < 3:
+            raise ValueError("Username must be at least 3 characters long")
+        if len(v) > 20:
+            raise ValueError("Username must be at most 20 characters long")
         invalid_chars = set(v).intersection(set(string.punctuation.replace("_", "")))
         chars = ", ".join(invalid_chars)
         if invalid_chars:
             raise ValueError(f"Username special characters not allowed: {chars}")
-        return v
-
-    @validator("username")
-    def username_must_be_at_least_3_characters_long(cls, v):
-        if len(v) < 3:
-            raise ValueError("Username must be at least 3 characters long")
-        return v
-
-    @validator("username")
-    def username_must_be_at_most_20_characters_long(cls, v):
-        if len(v) > 20:
-            raise ValueError("Username must be at most 20 characters long")
-        return v
-
-    @validator("username")
-    def username_must_start_with_letter(cls, v):
         if not v[0].isalpha():
             raise ValueError("Username must start with a letter")
-        return v
-
-    @validator("username")
-    def username_must_be_lower_case(cls, v):
         if v != v.lower():
             raise ValueError("Username must be lowercase")
-        return v
-
-    @validator("username")
-    def username_must_not_contain_whitespace(cls, v):
         if re.search(r"\s", v):
             raise ValueError("Username cannot have whitespace")
         return v
@@ -71,7 +41,19 @@ class UserRequest(BaseModel):
     @validator("password")
     def password_must_be_string(cls, v):
         if v is None:
-            raise ValueError("Missing password")
+            raise ValueError("Password missing")
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters long")
+        if len(v) > 20:
+            raise ValueError("Password must be at most 20 characters long")
+        if not set(string.ascii_lowercase).intersection(set(v)):
+            raise ValueError("Password must contain lowercase letter")
+        if not set(string.ascii_uppercase).intersection(set(v)):
+            raise ValueError("Password must contain uppercase letter")
+        if not set(string.punctuation).intersection(set(v)):
+            raise ValueError("Password must contain special character")
+        if not set(string.digits).intersection(set(v)):
+            raise ValueError("Password must contain digits")
         return v
 
 
