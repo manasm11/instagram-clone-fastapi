@@ -9,7 +9,6 @@ class TestCreatePost(TestCase):
             "/post/",
             json={
                 "image_url": "https://example.com/image.jpg",
-                "image_url_type": "absolute",
                 "caption": "This is a caption",
                 "creator_id": 1,
             },
@@ -27,10 +26,6 @@ class TestCreatePost(TestCase):
         response = self.create_post(image_url=None)
         self.check_error(response, "Image URL missing")
 
-    def test_create_post__image_url__type_missing(self):
-        response = self.create_post(image_url_type=None)
-        self.check_error(response, "Image URL Type missing")
-
     def test_create_post__caption__missing(self):
         response = self.create_post(caption=None)
         self.check_error(response, "Caption missing")
@@ -39,13 +34,22 @@ class TestCreatePost(TestCase):
         response = self.create_post(creator_id=None)
         self.check_error(response, "Creator missing")
 
-    def test_create_post__image_url__incorrect_format(self):
-        response = self.create_post(image_url="Some Wrong Image URL")
-        self.check_error(response, "Image URL is not valid")
+    def test_create_post__image_url__accepts_relative_urls(self):
+        response = self.create_post(image_url="/image.jpg")
+        assert (
+            response.status_code == 201
+        ), f"Response code is not 201, {response.json()}"
+        response_json = response.json()
+        assert response_json["image_url"] == "/image.jpg"
+        assert response_json["image_url_type"] == "relative"
 
-    def test_create_post__image_url_type__incorrect(self):
-        response = self.create_post(image_url_type="wrong")
-        self.check_error(response, "Image URL Type must be 'absolute' or 'relative'")
+    def test_create_post__image_url__incorrect_format(self):
+        msg = "Image URL is not valid: '{}'"
+        self.check_error(self.create_post(image_url="wrong"), msg.format("wrong"))
+        self.check_error(
+            self.create_post(image_url="http:/localhost:8000/abcd.gif"),
+            msg.format("http:/localhost:8000/abcd.gif"),
+        )
 
     def test_create_post__creator_id__doesnt_exists(self):
         response = self.create_post(creator_id=int("9" * 12))

@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel, Field, validator
@@ -9,27 +10,30 @@ from db.models import DbUser
 
 
 class PostRequest(BaseModel):
-    image_url: Any
-    image_url_type: Any
-    caption: Any
-    creator_id: Any
+    image_url: Any = Field(
+        ..., description="Image URL", example="https://example.com/img.jpg"
+    )
+    caption: Any = Field(..., description="Caption", example="This is a caption")
+    creator_id: Any = Field(..., description="Creator ID", example=1)
 
     @validator("image_url")
-    def validate_image_url(cls, v):
+    def image_url_validate(cls, v):
         if v is None:
             raise ValueError("Image URL missing")
-        if not re.match("(http)?s?:?(\/\/[^\"']*\.(?:png|jpg|jpeg|gif|png|svg))", v):
-            raise ValueError("Image URL is not valid")
+        if not re.match(
+            "(?:(?:http//|https://)|/)[^\"']*\.(?:png|jpg|jpeg|gif|png|svg)", v
+        ):
+            raise ValueError(f"Image URL is not valid: '{v}'")
         return v
 
     @validator("caption")
-    def validate_caption(cls, v):
+    def caption_validate(cls, v):
         if v is None:
             raise ValueError("Caption missing")
         return v
 
     @validator("creator_id")
-    def validate_creator_id(cls, v):
+    def creator_id_validate(cls, v):
         if v is None:
             raise ValueError("Creator missing")
         if str(v).isdecimal() is False:
@@ -37,14 +41,6 @@ class PostRequest(BaseModel):
         v = int(v)
         if not next(get_db()).query(DbUser).get(v):
             raise ValueError("Creator (User) does not exist")
-        return v
-
-    @validator("image_url_type")
-    def validate_image_url_type(cls, v):
-        if v is None:
-            raise ValueError("Image URL Type missing")
-        if v not in ["absolute", "relative"]:
-            raise ValueError("Image URL Type must be 'absolute' or 'relative'")
         return v
 
 

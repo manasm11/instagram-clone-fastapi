@@ -8,7 +8,10 @@ from .models import DbPost
 
 
 def create_post(db: Session, request: PostRequest):
-    post = DbPost(**request.dict(), timestamp=datetime.now())
+    image_url_type = "absolute" if request.image_url.startswith("http") else "relative"
+    post = DbPost(
+        **request.dict(), timestamp=datetime.now(), image_url_type=image_url_type
+    )
     db.add(post)
     db.commit()
     db.refresh(post)

@@ -38,7 +38,6 @@ class TestCase(unittest.TestCase):
     def create_post(
         self,
         image_url="https://example.com/image.jpg",
-        image_url_type="absolute",
         caption="My Khool caption is here.",
         creator_id=1,
     ):
@@ -46,7 +45,6 @@ class TestCase(unittest.TestCase):
             "/post/",
             json={
                 "image_url": image_url,
-                "image_url_type": image_url_type,
                 "caption": caption,
                 "creator_id": creator_id,
             },
