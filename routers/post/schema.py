@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import Any, List
 
 from pydantic import BaseModel, Field, validator
 
@@ -21,7 +21,7 @@ class PostRequest(BaseModel):
         if v is None:
             raise ValueError("Image URL missing")
         if not re.match(
-            "(?:(?:http//|https://)|/)[^\"']*\.(?:png|jpg|jpeg|gif|png|svg)", v
+            "(?:(?:http//|https://)|/)[^\"']*.(?:png|jpg|jpeg|gif|png|svg)", v
         ):
             raise ValueError(f"Image URL is not valid: '{v}'")
         return v
@@ -61,3 +61,7 @@ class PostResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class PostListReponse(BaseModel):
+    posts: List[PostResponse]

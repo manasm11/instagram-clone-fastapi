@@ -61,3 +61,24 @@ class TestCreatePost(TestCase):
 
     def test_create_post__requires_authentication(self):
         assert False, "Not implemented"
+
+
+class TestGetAllPost(TestCase):
+    def test_get_all_post__success(self):
+        self.create_post(caption="Some caption")
+        response = self.client.get("/post/all/")
+        assert response.status_code == 200
+        response_json = response.json()
+        assert "posts" in response_json
+        assert isinstance(response_json["posts"], list)
+        assert len(response_json["posts"]) == 1
+        assert response_json["posts"][0]["caption"] == "Some caption"
+
+    def test_get_all_post__timestamp_ordering(self):
+        self.create_post(caption="First Post")
+        self.create_post(caption="Second Post")
+        response = self.client.get("/post/all/")
+        response_json = response.json()
+        assert len(response_json["posts"]) == 2
+        assert response_json["posts"][0]["caption"] == "Second Post"
+        assert response_json["posts"][1]["caption"] == "First Post"
