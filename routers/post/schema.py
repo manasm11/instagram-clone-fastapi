@@ -63,5 +63,5 @@ class PostResponse(BaseModel):
         orm_mode = True
 
 
-class PostListReponse(BaseModel):
+class PostListResponse(BaseModel):
     posts: List[PostResponse]

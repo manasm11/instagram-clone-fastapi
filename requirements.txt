@@ -4,3 +4,5 @@ sqlalchemy
 loguru
 passlib
 bcrypt
+python-multipart
+aiofiles

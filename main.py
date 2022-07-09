@@ -3,6 +3,7 @@ import json
 from fastapi import FastAPI, Request, Response
 from fastapi.logger import logger
 from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
 import exceptions
@@ -35,6 +36,7 @@ logger.add(
 )
 app.include_router(user.router)
 app.include_router(post.router)
+app.mount("/images", StaticFiles(directory="images"), name="images")
 
 
 @app.get("/")
@@ -43,3 +45,6 @@ def root():
 
 
 app.add_exception_handler(exceptions.UserExists, exceptions.user_exists)
+app.add_exception_handler(
+    exceptions.InvalidImageExtension, exceptions.invalid_image_extension
+)

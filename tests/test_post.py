@@ -82,3 +82,9 @@ class TestGetAllPost(TestCase):
         assert len(response_json["posts"]) == 2
         assert response_json["posts"][0]["caption"] == "Second Post"
         assert response_json["posts"][1]["caption"] == "First Post"
+
+
+class TestImageUpload(TestCase):
+    def test_image_upload__endpoint_exists(self):
+        response = self.client.post("/post/image-upload")
+        assert response.status_code != 404, "Endpoint doesn't exist"
