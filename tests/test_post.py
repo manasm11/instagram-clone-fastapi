@@ -16,7 +16,6 @@ class TestCreatePost(TestCase):
         assert response.status_code == 201, "Response code is not 201"
         response_json = response.json()
         assert response_json["image_url"] == "https://example.com/image.jpg"
-        assert response_json["image_url_type"] == "absolute"
         assert response_json["caption"] == "This is a caption"
         assert "id" in response_json
         assert "timestamp" in response_json
@@ -33,15 +32,6 @@ class TestCreatePost(TestCase):
     def test_create_post__creator_id__missing(self):
         response = self.create_post(creator_id=None)
         self.check_error(response, "Creator missing")
-
-    def test_create_post__image_url__accepts_relative_urls(self):
-        response = self.create_post(image_url="/image.jpg")
-        assert (
-            response.status_code == 201
-        ), f"Response code is not 201, {response.json()}"
-        response_json = response.json()
-        assert response_json["image_url"] == "/image.jpg"
-        assert response_json["image_url_type"] == "relative"
 
     def test_create_post__image_url__incorrect_format(self):
         msg = "Image URL is not valid: '{}'"

@@ -33,7 +33,6 @@ class PostRequest(BaseModel):
 
 class CommentRequest(BaseModel):
     # TODO: Add validation for comment
-    username: str = Field(..., description="Username", example="test")
     text: str = Field(
         ..., description="Comment", example="This is a comment", min_length=1
     )
@@ -49,7 +48,9 @@ class _UserInPostResponse(BaseModel):
 
 class _CommentInPostResponse(BaseModel):
     text: str = Field(..., description="Comment", example="This is a comment")
-    username: str = Field(..., description="Username", example="test")
+    creator: _UserInPostResponse = Field(
+        description="Creator", example=_UserInPostResponse(username="test")
+    )
     timestamp: datetime = Field(
         ..., description="Creation Timestamp", example=datetime.now()
     )
@@ -75,11 +76,13 @@ class PostResponse(BaseModel):
         description="Comments",
         example=[
             _CommentInPostResponse(
-                text="This is a comment", username="test", timestamp=datetime.now()
+                text="This is a comment",
+                creator=_UserInPostResponse(username="test"),
+                timestamp=datetime.now(),
             ),
             _CommentInPostResponse(
                 text="This is another comment",
-                username="test2",
+                creator=_UserInPostResponse(username="test2"),
                 timestamp=datetime.now(),
             ),
         ],

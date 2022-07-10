@@ -9,12 +9,8 @@ from .models import DbPost, DbUser
 
 
 def create_post(db: Session, request: PostRequest, current_user_id: int) -> DbPost:
-    image_url_type = "absolute" if request.image_url.startswith("http") else "relative"
     post = DbPost(
-        **request.dict(),
-        timestamp=datetime.now(),
-        image_url_type=image_url_type,
-        creator_id=current_user_id
+        **request.dict(), timestamp=datetime.now(), creator_id=current_user_id
     )
     db.add(post)
     db.commit()
