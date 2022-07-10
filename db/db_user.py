@@ -15,3 +15,13 @@ def create_user(db: Session, user: UserRequest):
     db.commit()
     db.refresh(user)
     return user
+
+
+def get_user_by_username(db: Session, username: str):
+    users_query = db.query(DbUser).filter(DbUser.username == username)
+    users = users_query.all()
+    if len(users) == 0:
+        raise exceptions.UserNotExists(username)
+    if len(users) > 1:
+        raise exceptions.MultipleUsersWithSameUsername(username, len(users))
+    return users_query.first()

@@ -31,7 +31,7 @@ class TestCreateUser(TestCase):
 
         self.check_error(
             self.create_user(username),
-            f"User with username {username} already exists",
+            f"User with username '{username}' already exists",
             status.HTTP_409_CONFLICT,
         )
 

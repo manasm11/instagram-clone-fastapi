@@ -5,8 +5,8 @@ from typing import List
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from sqlalchemy.orm import Session
 
-from db import db_post
-from db.database import get_db
+from auth import get_current_user
+from db import DbUser, db_post, get_db
 
 from .common import check_image_filename, get_unique_filename
 from .schema import PostListResponse, PostRequest, PostResponse
@@ -15,8 +15,12 @@ router = APIRouter(prefix="/post", tags=["Post"])
 
 
 @router.post("/", status_code=201, response_model=PostResponse)
-async def create_post(postRequest: PostRequest, db: Session = Depends(get_db)):
-    post = db_post.create_post(db, postRequest)
+async def create_post(
+    postRequest: PostRequest,
+    db: Session = Depends(get_db),
+    current_user: DbUser = Depends(get_current_user),
+):
+    post = db_post.create_post(db, postRequest, current_user.id)
     return post
 
 
@@ -27,11 +31,25 @@ async def get_all_post(db: Session = Depends(get_db)):
 
 
 @router.post("/image-upload")
-async def image_upload(request: Request, image: UploadFile = File(...)):
+async def image_upload(
+    request: Request,
+    image: UploadFile = File(...),
+    current_user: DbUser = Depends(get_current_user),
+):
     check_image_filename(image.filename)
     new_filename = get_unique_filename(image.filename)
     os.makedirs("images", exist_ok=True)
-    path = f"images/{new_filename}"
+    path = f"images/{current_user.username}/{new_filename}"
     with open(path, "wb") as f:
         shutil.copyfileobj(image.file, f)
     return {"image_url": f"{request.base_url}{path}"}
+
+
+@router.get("/delete/{post_id}")
+async def delete_post(
+    post_id: int,
+    db: Session = Depends(get_db),
+    current_user: DbUser = Depends(get_current_user),
+):
+    db_post.delete_post(db, post_id, current_user.id)
+    return {"message": "Post deleted"}
