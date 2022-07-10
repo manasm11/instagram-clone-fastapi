@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, File, Request, UploadFile
 from sqlalchemy.orm import Session
 
 from auth import get_current_user
-from db import DbUser, db_post, get_db
+from db import DbUser, db_comment, db_post, get_db
 
 from .common import check_image_filename, get_unique_filename
-from .schema import PostListResponse, PostRequest, PostResponse
+from .schema import CommentRequest, PostListResponse, PostRequest, PostResponse
 
 router = APIRouter(prefix="/post", tags=["Post"])
 
@@ -53,3 +53,14 @@ async def delete_post(
 ):
     db_post.delete_post(db, post_id, current_user.id)
     return {"message": "Post deleted"}
+
+
+@router.post("/comment/{post_id}")
+async def create_comment(
+    post_id: int,
+    commentRequest: CommentRequest,
+    db: Session = Depends(get_db),
+    current_user: DbUser = Depends(get_current_user),
+):
+    comment = db_comment.create_comment(db, commentRequest, post_id, current_user.id)
+    return comment
