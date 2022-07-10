@@ -38,7 +38,7 @@ async def image_upload(
 ):
     check_image_filename(image.filename)
     new_filename = get_unique_filename(image.filename)
-    os.makedirs("images", exist_ok=True)
+    os.makedirs(f"images/{current_user.username}", exist_ok=True)
     path = f"images/{current_user.username}/{new_filename}"
     with open(path, "wb") as f:
         shutil.copyfileobj(image.file, f)
@@ -55,12 +55,11 @@ async def delete_post(
     return {"message": "Post deleted"}
 
 
-@router.post("/comment/{post_id}")
+@router.post("/comment")
 async def create_comment(
-    post_id: int,
     commentRequest: CommentRequest,
     db: Session = Depends(get_db),
     current_user: DbUser = Depends(get_current_user),
 ):
-    comment = db_comment.create_comment(db, commentRequest, post_id, current_user.id)
+    comment = db_comment.create_comment(db, commentRequest, current_user.id)
     return comment

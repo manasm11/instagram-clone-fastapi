@@ -18,9 +18,7 @@ class PostRequest(BaseModel):
     def image_url_validate(cls, v):
         if v is None:
             raise ValueError("Image URL missing")
-        if not re.match(
-            "(?:(?:http//|https://)|/)[^\"']*.(?:png|jpg|jpeg|gif|png|svg)", v
-        ):
+        if not re.match("(?:(?:http://|https://)|/)[^\"']*", v):
             raise ValueError(f"Image URL is not valid: '{v}'")
         return v
 

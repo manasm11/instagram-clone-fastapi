@@ -2,6 +2,7 @@ import json
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.logger import logger
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
@@ -58,3 +59,14 @@ app.add_exception_handler(
 app.add_exception_handler(exceptions.IncorrectPassword, exceptions.incorrect_password)
 app.add_exception_handler(exceptions.PostNotExists, exceptions.post_not_exists)
 app.add_exception_handler(exceptions.NotAuthorized, exceptions.not_authorized)
+
+
+origins = ["http://localhost:3000"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
