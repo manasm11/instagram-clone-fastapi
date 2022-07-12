@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 format() {
     venv/bin/python -m isort .
     venv/bin/python -m black .
